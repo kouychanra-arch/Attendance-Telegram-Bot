@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-kantumruy), ui-sans-serif, system-ui, sans-serif;
+  --color-brand-primary: #4A3AFF;
+  --color-brand-secondary: #3D2DE0;
+  --color-slate-50: #F8FAFC;
+  --color-slate-800: #1E293B;
+  --shadow-brand: 0 4px 14px 0 rgba(74, 58, 255, 0.39);
+  --shadow-soft: 0 2px 10px -4px rgba(0, 0, 0, 0.1);
+}
+
+@layer utilities {
+  .bg-hero-gradient {
+    background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-secondary) 100%);
+  }
+}
