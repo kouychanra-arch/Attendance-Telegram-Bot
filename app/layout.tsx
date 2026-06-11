@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import { Kantumruy_Pro } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
+import Script from 'next/script';
 
 const kantumruyPro = Kantumruy_Pro({
   subsets: ['khmer', 'latin'],
@@ -20,6 +21,8 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
+        {/* Telegram WebApp script to auto-link telegram_id when launched in TG */}
+        <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </body>
     </html>
   );

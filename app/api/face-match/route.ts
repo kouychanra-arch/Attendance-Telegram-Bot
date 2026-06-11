@@ -1,66 +1,112 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI } from '@google/genai';
+import { getSupabase } from '@/lib/supabase';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+function getEuclideanDistance(a: number[], b: number[]): number {
+  if (!a || !b || a.length !== b.length) return Infinity;
+  let sum = 0;
+  for (let i = 0; i < a.length; i++) {
+    sum += (a[i] - b[i]) * (a[i] - b[i]);
+  }
+  return Math.sqrt(sum);
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const { image } = await req.json();
+    const { descriptor, localEnrollments } = await req.json();
 
-    if (!image) {
-      return NextResponse.json({ success: false, error: 'No image provided' }, { status: 400 });
+    if (!descriptor || !Array.isArray(descriptor) || descriptor.length !== 128) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'សំណើគ្មានទម្រង់មុខត្រឹមត្រូវទេ (Invalid 128-dimensional descriptor format)' 
+      }, { status: 400 });
     }
 
-    // Strip the data:image/jpeg;base64, prefix
-    const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+    let matchedEmployee: { id: string; full_name: string } | null = null;
+    let minDistance = Infinity;
 
-    const prompt = `
-      You are an AI face matcher for an employee attendance system.
-      We received this webcam image. Does it contain a clear, identifiable human face?
-      Respond in JSON format:
-      {
-        "hasFace": boolean,
-        "confidence": number,
-        "message": "reasoning"
-      }
-    `;
+    // 1. Try to query enrolled employees from Supabase database
+    const supabase = getSupabase() as any;
+    if (supabase) {
+      try {
+        const { data: enrollments, error } = await supabase
+          .from('face_enrollments')
+          .select(`
+            employee_id,
+            descriptor,
+            employees:employee_id (
+              full_name
+            )
+          `);
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash',
-      contents: [
-        {
-           role: 'user',
-           parts: [
-             { text: prompt },
-             { inlineData: { data: base64Data, mimeType: 'image/jpeg' }}
-           ]
+        if (!error && enrollments && enrollments.length > 0) {
+          for (const item of enrollments) {
+            let desc: number[] | null = null;
+            if (Array.isArray(item.descriptor)) {
+              desc = item.descriptor;
+            } else if (typeof item.descriptor === 'string') {
+              desc = JSON.parse(item.descriptor);
+            }
+            
+            if (desc && desc.length === 128) {
+              const dist = getEuclideanDistance(descriptor, desc);
+              if (dist < minDistance) {
+                minDistance = dist;
+                const empInfo = item.employees as any;
+                matchedEmployee = {
+                  id: item.employee_id,
+                  full_name: empInfo?.full_name || 'បុគ្គលិកមិនស្គាល់ឈ្មោះ',
+                };
+              }
+            }
+          }
         }
-      ],
-      config: {
-        responseMimeType: 'application/json',
+      } catch (dbErr) {
+        console.warn("Supabase fetch failed, sliding to local comparison fallback:", dbErr);
       }
-    });
+    }
 
-    const resultText = response.text || "{}";
-    const resultJson = JSON.parse(resultText);
+    // 2. Fallbacks/Local Sync: match against offline local enrollments for preview test sandbox
+    if (localEnrollments && Array.isArray(localEnrollments)) {
+      for (const item of localEnrollments) {
+        let desc: number[] | null = null;
+        if (Array.isArray(item.descriptor)) {
+          desc = item.descriptor;
+        } else if (typeof item.descriptor === 'string') {
+          desc = JSON.parse(item.descriptor);
+        }
 
-    // In a real system, we'd query Supabase with a vector representation,
-    // For preview purposes, we simulate the "match" if the AI detects a valid face.
-    if (resultJson.hasFace && resultJson.confidence > 0.7) {
-      // Mock Success for demonstration
+        if (desc && desc.length === 128) {
+          const dist = getEuclideanDistance(descriptor, desc);
+          if (dist < minDistance) {
+            minDistance = dist;
+            matchedEmployee = {
+              id: item.employeeId,
+              full_name: item.employeeName || 'បុគ្គលិកមិនស្គាល់ឈ្មោះ',
+            };
+          }
+        }
+      }
+    }
+
+    const THRESHOLD = 0.5;
+
+    // 3. Evaluate match using strict threshold of < 0.5
+    if (matchedEmployee && minDistance < THRESHOLD) {
       return NextResponse.json({
         success: true,
-        employeeId: 'mock-uuid-1234',
-        employeeName: 'បុគ្គលិក គំរូ (Demo)',
-      });
-    } else {
-      return NextResponse.json({
-        success: false,
-        error: 'មិនអាចស្គាល់មុខបានច្បាស់ទេ។ សូមមើលចំកាមេរ៉ា។ (No clear face detected)',
+        employeeId: matchedEmployee.id,
+        employeeName: matchedEmployee.full_name,
+        distance: minDistance
       });
     }
+
+    return NextResponse.json({
+      success: false,
+      error: `ស្កែនមុខមិនស៊ីគ្នាទេ! ចម្ងាយទម្រង់មុខខុសគ្នា៖ ${minDistance === Infinity ? 'N/A' : minDistance.toFixed(3)} (ត្រូវការពិន្ទុ < ${THRESHOLD} ដើម្បីផ្ទៀងផ្ទាត់)`
+    });
+
   } catch (error: any) {
-    console.error('Face match error:', error);
-    return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
+    console.error('Face match server error:', error);
+    return NextResponse.json({ success: false, error: 'លម្អៀងម៉ាស៊ីនមេ ឬទម្រង់មុខមិនត្រឹមត្រូវ' }, { status: 500 });
   }
 }
