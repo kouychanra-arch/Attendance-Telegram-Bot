@@ -7,6 +7,7 @@ import { Camera, QrCode, SmartphoneNfc, MapPin, CheckCircle2, XCircle, Loader2 }
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 type Method = 'face' | 'qr' | 'nfc' | 'gps';
 
@@ -117,49 +118,52 @@ export default function CheckInKiosk() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative bg-slate-50 text-slate-800">
+    <div className="min-h-screen flex items-center justify-center p-6 relative bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="absolute top-6 left-6 z-10">
-        <Link href="/" className="inline-flex items-center justify-center px-4 py-2 font-medium bg-white border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 transition-colors">
+        <Link href="/" className="inline-flex items-center justify-center px-4 py-2 font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
           ← ត្រឡប់ក្រោយ
         </Link>
+      </div>
+      <div className="absolute top-6 right-6 z-10">
+        <ThemeToggle />
       </div>
       <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-[250px_1fr] gap-8">
         
         {/* Sidebar Controls */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 flex flex-col gap-4 shadow-sm">
-          <h2 className="text-xl font-bold mb-4 text-indigo-950">ជម្រើស Check-In</h2>
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 flex flex-col gap-4 shadow-sm">
+          <h2 className="text-xl font-bold mb-4 text-indigo-950 dark:text-indigo-200">ជម្រើស Check-In</h2>
           
           <button 
             onClick={() => setMethod('face')}
-            className={`flex items-center gap-3 p-4 rounded-2xl transition-all font-medium ${method === 'face' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'}`}
+            className={`flex items-center gap-3 p-4 rounded-2xl transition-all font-medium ${method === 'face' ? 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 shadow-sm' : 'bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 border border-transparent'}`}
           >
             <Camera className="w-5 h-5" /> ស្កែនមុខ (Face)
           </button>
           
           <button 
             onClick={() => setMethod('qr')}
-            className={`flex items-center gap-3 p-4 rounded-2xl transition-all font-medium ${method === 'qr' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'}`}
+            className={`flex items-center gap-3 p-4 rounded-2xl transition-all font-medium ${method === 'qr' ? 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 shadow-sm' : 'bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 border border-transparent'}`}
           >
             <QrCode className="w-5 h-5" /> ប្រើ QR Code
           </button>
 
           <button 
             onClick={() => setMethod('nfc')}
-            className={`flex items-center gap-3 p-4 rounded-2xl transition-all font-medium ${method === 'nfc' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'}`}
+            className={`flex items-center gap-3 p-4 rounded-2xl transition-all font-medium ${method === 'nfc' ? 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 shadow-sm' : 'bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 border border-transparent'}`}
           >
             <SmartphoneNfc className="w-5 h-5" /> ប៉ះកាត NFC
           </button>
 
           <button 
             onClick={() => setMethod('gps')}
-            className={`flex items-center gap-3 p-4 rounded-2xl transition-all font-medium ${method === 'gps' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-transparent'}`}
+            className={`flex items-center gap-3 p-4 rounded-2xl transition-all font-medium ${method === 'gps' ? 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 shadow-sm' : 'bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 border border-transparent'}`}
           >
             <MapPin className="w-5 h-5" /> Geofence (GPS)
           </button>
         </div>
 
         {/* Action Window */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-8 flex flex-col items-center justify-center min-h-[500px] relative overflow-hidden shadow-sm">
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-8 flex flex-col items-center justify-center min-h-[500px] relative overflow-hidden shadow-sm">
           
           <AnimatePresence mode="wait">
             {/* Status Overlay */}

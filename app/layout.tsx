@@ -1,6 +1,7 @@
 import type {Metadata} from 'next';
 import { Kantumruy_Pro } from 'next/font/google';
 import './globals.css';
+import { ThemeProvider } from '@/components/theme-provider';
 
 const kantumruyPro = Kantumruy_Pro({
   subsets: ['khmer', 'latin'],
@@ -14,9 +15,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
-    <html lang="en" className={kantumruyPro.variable}>
-      <body suppressHydrationWarning className="font-sans antialiased text-slate-800 min-h-screen bg-slate-50 selection:bg-indigo-500/30">
-        {children}
+    <html lang="en" className={kantumruyPro.variable} suppressHydrationWarning>
+      <body suppressHydrationWarning className="font-sans antialiased text-slate-800 dark:text-slate-100 min-h-screen bg-slate-50 dark:bg-slate-900 selection:bg-indigo-500/30">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

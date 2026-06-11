@@ -5,12 +5,13 @@ import { motion } from 'motion/react';
 import { Users, Building2, Receipt, Clock, Settings, MonitorPlay, Shield, Bell } from 'lucide-react';
 import { getSupabase } from '@/lib/supabase';
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'attendance' | 'employees' | 'payroll' | 'reports'>('dashboard');
 
   return (
-    <div className="min-h-screen flex bg-slate-50 font-sans text-slate-800">
+    <div className="min-h-screen flex bg-slate-50 dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-100 transition-colors duration-300">
       
       {/* Sidebar Navigation */}
       <aside className="w-64 bg-[#4A3AFF] text-white flex flex-col shrink-0">
@@ -77,23 +78,24 @@ export default function AdminDashboard() {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header */}
-        <header className="h-20 bg-white px-8 flex items-center justify-between border-b border-slate-100 shadow-sm z-10 shrink-0">
+        <header className="h-20 bg-white dark:bg-slate-800 px-8 flex items-center justify-between border-b border-slate-100 dark:border-slate-700 shadow-sm z-10 shrink-0">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold text-slate-800">ទិដ្ឋភាពទូទៅថ្ងៃនេះ</h1>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">
+            <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">ទិដ្ឋភាពទូទៅថ្ងៃនេះ</h1>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20">
               ប្រព័ន្ធដំណើរការធម្មតា
             </span>
           </div>
 
           <div className="flex items-center gap-6">
-            <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors">
+            <ThemeToggle />
+            <button className="relative p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
               <Bell className="w-5 h-5" />
               <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
             </button>
-            <div className="w-px h-6 bg-slate-200"></div>
+            <div className="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
             <div className="flex items-center gap-3 cursor-pointer">
-              <span className="text-sm font-semibold text-slate-700">សុខ ចាន់ដារ៉ា</span>
-              <div className="w-9 h-9 rounded-full bg-indigo-50 text-indigo-700 font-bold flex items-center justify-center text-sm border border-indigo-100">
+              <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">សុខ ចាន់ដារ៉ា</span>
+              <div className="w-9 h-9 rounded-full bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 font-bold flex items-center justify-center text-sm border border-indigo-100 dark:border-indigo-500/30">
                 SC
               </div>
             </div>
@@ -111,36 +113,36 @@ export default function AdminDashboard() {
             {activeTab === 'dashboard' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 {/* Stats Cards */}
-                <div className="bg-white rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-col justify-between">
-                  <span className="text-slate-500 text-sm font-medium mb-4">បុគ្គលិកសរុប</span>
+                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
+                  <span className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-4">បុគ្គលិកសរុប</span>
                   <div className="flex items-end justify-between">
-                    <span className="text-4xl font-bold text-slate-800">1,240</span>
+                    <span className="text-4xl font-bold text-slate-800 dark:text-slate-100">1,240</span>
                     <span className="text-emerald-500 text-sm font-semibold">+4 ថ្មី</span>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-col justify-between">
-                  <span className="text-slate-500 text-sm font-medium mb-4">វត្តមានថ្ងៃនេះ</span>
+                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
+                  <span className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-4">វត្តមានថ្ងៃនេះ</span>
                   <div className="flex items-end justify-between">
-                    <span className="text-4xl font-bold text-[#4A3AFF]">1,185</span>
-                    <span className="text-slate-400 text-sm">95.5% នៃសរុប</span>
+                    <span className="text-4xl font-bold text-[#4A3AFF] dark:text-[#6A5AFF]">1,185</span>
+                    <span className="text-slate-400 dark:text-slate-500 text-sm">95.5% នៃសរុប</span>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-col justify-between">
-                  <span className="text-slate-500 text-sm font-medium mb-4">មកយឺត</span>
+                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
+                  <span className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-4">មកយឺត</span>
                   <div className="flex items-end justify-between">
                     <span className="text-4xl font-bold text-orange-500">42</span>
                     <span className="text-orange-500 text-sm font-medium">-12% ធៀបខែមុន</span>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-col justify-between relative overflow-hidden">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-slate-100 dark:border-slate-700 flex flex-col justify-between relative overflow-hidden">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
-                  <span className="text-slate-500 text-sm font-medium mb-4 ml-2">អវត្តមាន</span>
+                  <span className="text-slate-500 dark:text-slate-400 text-sm font-medium mb-4 ml-2">អវត្តមាន</span>
                   <div className="flex items-end justify-between ml-2">
-                    <span className="text-4xl font-bold text-red-600">13</span>
-                    <span className="text-slate-400 text-sm">គ្មានច្បាប់</span>
+                    <span className="text-4xl font-bold text-red-600 dark:text-red-500">13</span>
+                    <span className="text-slate-400 dark:text-slate-500 text-sm">គ្មានច្បាប់</span>
                   </div>
                 </div>
               </div>
